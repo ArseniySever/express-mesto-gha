@@ -1,4 +1,4 @@
-const Card = require("../models/User");
+const Card = require("../models/cards");
 
 const getCards = (req, res) => {
   return Card.find({}).then((cards) => {
