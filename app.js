@@ -17,7 +17,6 @@ mongoose
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.json());
 
@@ -30,6 +29,10 @@ app.use((req, res, next) => {
 });
 app.use("/users", userRoutes);
 app.use("/cards", cardsRoutes);
+
+app.use('*', (req, res) => {
+  return res.status(404).send({ message: "Routes not found" });
+});
 
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
