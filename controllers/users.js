@@ -6,7 +6,7 @@ const ERROR_CODE = 400;
 const getUsers = (req, res) => {
   return User.find({})
   .then((users) => {
-    return res.send(users);
+    return res.status(200).send(users);
   })
   .catch((err) => {
     if (err.name === 'CastError') {
@@ -22,7 +22,7 @@ const getUserById = (req, res) => {
       if (!user) {
         return res.status(ERROR_CODE).send({ message: "User not found" });
       }
-      return res.send({user});
+      return res.status(200).send({user});
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -34,7 +34,7 @@ const createUser = (req, res) => {
   const {name, about, avatar} = req.body;
   return User.create({name, about, avatar})
     .then((user) => {
-      return res.send({ name, about, avatar, _id,});
+      return res.status(201).send({ name, about, avatar, _id,});
     })
     .catch((err) => {
         return res.status(ERROR_CODE).send({
