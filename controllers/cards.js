@@ -6,7 +6,7 @@ const ERROR_CODE_CONNECTION = 400;
 const getCards = (req, res) => {
   return Card.find({})
   .then((cards) => {
-    return res.status(200).send({ data: cards });
+    return res.send({ data: cards });
     })
   .catch((err) => {
     if (err.name === 'CastError') {
@@ -19,7 +19,7 @@ const createCards = (req, res) => {
   const { cardId } = req.user;
   return Card.create({ name, link, owner: cardId })
     .then((card) => {
-      return res.status(201).send({data: card});
+      return res.send({data: card});
     })
     .catch((err) => {
         return res.status(ERROR_CODE).send({
@@ -27,6 +27,7 @@ const createCards = (req, res) => {
             .map((err) => err.message)
             .join(", ")}`,
         });
+        return res.status(ERROR_CODE_DEFAULT).send({ message: "Server Error" });
     });
 }
 
@@ -77,7 +78,7 @@ const dislikeCard = (req, res) => {
         return res.status(ERROR_CODE_CONNECTION).send({ message: "Card not found" });
       }
       card
-        .then(() => res.remove(card))
+        .then(() => res.send(card))
     })
       .catch((err) => {
         if (err.name === 'CastError') {
