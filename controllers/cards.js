@@ -1,7 +1,7 @@
 const Card = require("../models/card");
 const ERROR_CODE_DEFAULT = 500;
 const ERROR_CODE = 400;
-const ERROR_CODE_CONNECTION = 400;
+const ERROR_CODE_CONNECTION = 404;
 
 const getCards = (req, res) => {
   return Card.find({})
@@ -9,25 +9,23 @@ const getCards = (req, res) => {
     return res.send({ data: cards });
     })
   .catch((err) => {
-    if (err.name === 'CastError') {
-      return res.status(ERROR_CODE_DEFAULT).send({ message: "Server Error" });    }
+      return res.status(ERROR_CODE_DEFAULT).send({ message: "Server Error" });
     });
 };
 
 const createCards = (req, res) => {
   const { name, link } = req.body;
-  const { cardId } = req.user;
-  return Card.create({ name, link, owner: cardId })
+  const { _id } = req.user;
+  return Card.create({ name, link, owner: _id })
     .then((card) => {
       return res.send({data: card});
     })
     .catch((err) => {
-        return res.status(ERROR_CODE).send({
-          message: `${Object.values(err.errors)
-            .map((err) => err.message)
-            .join(", ")}`,
-        });
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: "Server Error" });
+      }else{
         return res.status(ERROR_CODE_DEFAULT).send({ message: "Server Error" });
+      }
     });
 }
 
@@ -39,12 +37,14 @@ const deleteCardsById = (req, res) => {
         return res.status(ERROR_CODE_CONNECTION).send({ message: "Card not found" });
       }
       card
-        .remove()
         .then(() => res.send({ data: card }))
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: "Server Error" });    }
+        return res.status(ERROR_CODE).send({ message: "Invalid id" });
+      }else{
+        return res.status(ERROR_CODE_DEFAULT).send({ message: "Server Error" });
+      }
       });
 };
 
@@ -63,7 +63,10 @@ const likeCard = (req, res) => {
     })
       .catch((err) => {
         if (err.name === 'CastError') {
-          return res.status(ERROR_CODE).send({ message: "Server Error" });    }
+          return res.status(ERROR_CODE).send({ message: "Invalid id" });
+        }else{
+          return res.status(ERROR_CODE_CONNECTION).send({ message: "Server Error" });
+        }
         });
   };
 
@@ -82,7 +85,7 @@ const dislikeCard = (req, res) => {
     })
       .catch((err) => {
         if (err.name === 'CastError') {
-          return res.status(ERROR_CODE).send({ message: "Server Error" });    }
+          return res.status(ERROR_CODE_DEFAULT).send({ message: "Invalid id" });    }
         });
   };
 
