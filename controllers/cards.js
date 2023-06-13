@@ -43,17 +43,18 @@ const deleteCardsById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE).send({ message: 'Invalid id' });
+        res.status(ERROR_CODE_DEFAULT).send({ message: 'Invalid id' });
       } else {
-        res.status(ERROR_CODE_DEFAULT).send({ message: 'Server Error' });
+        res.status(ERROR_CODE).send({ message: 'Server Error' });
       }
     });
 };
 
 const likeCard = (req, res) => {
+  const userId = req.user._id;
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: userId } },
     { new: true },
   )
     .then((card) => {
