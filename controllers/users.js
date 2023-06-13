@@ -64,7 +64,10 @@ const resumeProfile = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send(user);
+      res.send({
+        name: user.name,
+        about: user.about,
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -86,7 +89,9 @@ const resumeAvatar = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send(user);
+      res.send({
+        avatar: user.avatar,
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
