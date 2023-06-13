@@ -32,20 +32,20 @@ const createCards = (req, res) => {
 
 const deleteCardsById = (req, res) => {
   const { cardId } = req.params;
-  return Card.findByIdAndRemove({ cardId })
+  return Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
         res
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'Card not found' });
       }
-      card.then(() => res.send({ data: card }));
+      card.then((myCard) => res.send({ data: myCard }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_CONNECTION).send({ message: 'Invalid id' });
+        res.status(ERROR_CODE).send({ message: 'Invalid id' });
       } else {
-        res.status(ERROR_CODE).send({ message: 'Server Error' });
+        res.status(ERROR_CODE_DEFAULT).send({ message: 'Server Error' });
       }
     });
 };
@@ -63,7 +63,7 @@ const likeCard = (req, res) => {
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'Card not found' });
       }
-      card.then(() => res.send({ data: card }));
+      res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -88,7 +88,7 @@ const dislikeCard = (req, res) => {
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'Card not found' });
       }
-      card.then(() => res.send({ data: card }));
+      res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
