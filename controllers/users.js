@@ -24,7 +24,7 @@ const getUserById = (req, res) => {
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'User not found' });
       }
-      return res.send({ user });
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -39,7 +39,12 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   return User.create({ name, about, avatar })
     .then((user) => {
-      res.send({ name: user.name, about: user.about, avatar: user.avatar });
+      res.send({
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -58,7 +63,7 @@ const resumeProfile = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send({ user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -72,13 +77,15 @@ const resumeProfile = (req, res) => {
 };
 const resumeAvatar = (req, res) => {
   const { userId } = req.user._id;
+  const { avatar } = req.body;
+
   User.findByIdAndUpdate(
     userId,
-    { avatar: req.body.avatar },
+    { avatar },
     { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send({ user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
