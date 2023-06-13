@@ -31,7 +31,7 @@ const createCards = (req, res) => {
 };
 
 const deleteCardsById = (req, res) => {
-  const { cardId } = req.params;
+  const { cardId } = req.user._id;
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
@@ -39,7 +39,7 @@ const deleteCardsById = (req, res) => {
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'Card not found' });
       }
-      res.send({ data: card });
+      card.then((myCard) => res.send({ data: myCard }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
