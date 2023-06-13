@@ -43,7 +43,7 @@ const deleteCardsById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_DEFAULT).send({ message: 'Invalid id' });
+        res.status(ERROR_CODE_CONNECTION).send({ message: 'Invalid id' });
       } else {
         res.status(ERROR_CODE).send({ message: 'Server Error' });
       }
@@ -63,7 +63,7 @@ const likeCard = (req, res) => {
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'Card not found' });
       }
-      card.then(() => res.send(card));
+      card.then(() => res.send({ data: card }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -88,7 +88,7 @@ const dislikeCard = (req, res) => {
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'Card not found' });
       }
-      card.then(() => res.send(card));
+      card.then(() => res.send({ data: card }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
