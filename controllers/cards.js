@@ -51,10 +51,10 @@ const deleteCardsById = (req, res) => {
 };
 
 const likeCard = (req, res) => {
-  const userId = req.user._id;
+  const cardId = req.user._id;
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: userId } },
+    { $addToSet: { likes: cardId } },
     { new: true },
   )
     .then((card) => {
