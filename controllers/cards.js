@@ -39,7 +39,7 @@ const deleteCardsById = (req, res) => {
           .status(ERROR_CODE_CONNECTION)
           .send({ message: 'Card not found' });
       }
-      card.then((myCard) => res.send({ data: myCard }));
+      res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
