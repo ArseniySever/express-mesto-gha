@@ -32,7 +32,7 @@ const createCards = (req, res) => {
 
 const deleteCardsById = (req, res) => {
   const { cardId } = req.params;
-  return Card.findByIdAndRemove(cardId)
+  Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
         res
