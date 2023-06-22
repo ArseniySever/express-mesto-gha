@@ -1,45 +1,63 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
+const { ConflictError } = require('../error/ConflictError');
+const { ValidationError } = require('../error/ValidationError');
+const { NotFoundError } = require('../error/NotFoundError');
+const { UnauthorizedError } = require('../error/NotFoundError');
 
-const ERROR_CODE_DEFAULT = 500;
-const ERROR_CODE = 400;
-const ERROR_CODE_CONNECTION = 404;
-
-const getUsers = (req, res) => {
+const SALT_LENGTH = 10;
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       res.send(users);
     })
     .catch(() => {
-      res.status(ERROR_CODE_DEFAULT).send({ message: 'Server Error' });
+      next(new ConflictError('Server Error'));
     });
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   const { userId } = req.params;
 
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res
-          .status(ERROR_CODE_CONNECTION)
-          .send({ message: 'User not found' });
+        throw new NotFoundError('User not found');
       }
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE).send({ message: 'Invalid id' });
+        next(new ValidationError('Invalid'));
       } else {
-        res.status(ERROR_CODE_DEFAULT).send({ message: 'Server Error' });
+        next(new ConflictError('Server Error'));
       }
     });
 };
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  return User.create({ name, about, avatar })
+const createUser = (req, res, next) => {
+  const {
+    email,
+    password,
+    name,
+    about,
+    avatar,
+  } = req.body;
+  const passwordHash = bcrypt.hash(password, SALT_LENGTH);
+
+  return User.create({
+    email,
+    password,
+    name,
+    about,
+    avatar,
+  })
     .then((user) => {
       res.send({
+        email: user.email,
+        password: passwordHash,
         _id: user._id,
         name: user.name,
         about: user.about,
@@ -48,14 +66,14 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: 'Server Error' });
+        next(new ValidationError('Server Error'));
       } else {
-        res.status(ERROR_CODE_DEFAULT).send({ message: 'Server Error' });
+        next(new ConflictError('Server Error'));
       }
     });
 };
 
-const resumeProfile = (req, res) => {
+const resumeProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -67,15 +85,13 @@ const resumeProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Incorrect data' });
+        throw new NotFoundError('Incorrect data');
       } else {
-        res.status(ERROR_CODE_DEFAULT).send({ message: 'Server Error' });
+        next(new ConflictError('Server Error'));
       }
     });
 };
-const resumeAvatar = (req, res) => {
+const resumeAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -88,11 +104,46 @@ const resumeAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Incorrect data' });
+        throw new NotFoundError('Incorrect data');
       } else {
-        res.status(ERROR_CODE_DEFAULT).send({ message: 'Server Error' });
+        next(new ConflictError('Server Error'));
+      }
+    });
+};
+
+const login = (req, res, next) => {
+  const { email } = req.body;
+
+  return User.findOne({ email }).select('+password')
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
+      });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new UnauthorizedError('UNAUTHORIZED');
+      } else {
+        next(new ConflictError('Server Error'));
+      }
+    });
+};
+
+const resumeNowProfile = (req, res, next) => {
+  const { userId } = req.params;
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('User not found');
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        throw new NotFoundError('Invalid id');
+      } else {
+        next(new ConflictError('Server Error'));
       }
     });
 };
@@ -103,4 +154,6 @@ module.exports = {
   createUser,
   resumeProfile,
   resumeAvatar,
+  login,
+  resumeNowProfile,
 };
