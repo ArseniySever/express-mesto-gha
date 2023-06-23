@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
-const { celebrate } = require('celebrate');
+const { errors } = require('celebrate');
 const { validateUserCreate, validateUserLogin } = require('./middlewares/joi');
 
 const cardsRoutes = require('./routes/cards');
@@ -27,6 +27,7 @@ app.use(helmet());
 
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardsRoutes);
+app.use(errors());
 
 app.post('/signin', validateUserLogin, login);
 
@@ -36,6 +37,5 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Routes not found' });
 });
 app.use(error);
-app.use(celebrate());
 
 app.listen(PORT);
