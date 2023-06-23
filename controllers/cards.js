@@ -24,6 +24,8 @@ const createCards = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Server Error'));
+      } else {
+        next(err);
       }
     });
 };
