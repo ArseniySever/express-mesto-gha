@@ -1,4 +1,5 @@
-const express = require ('express');
+const express = require('express');
+
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
@@ -6,7 +7,7 @@ const mongoose = require('mongoose');
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const { auth } = require('./middlewares/auth');
-const { error } = require('./middlewares/error');
+const error = require('./middlewares/error');
 const { login, createUser } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
@@ -24,8 +25,6 @@ app.use(helmet());
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardsRoutes);
 
-app.use(error);
-
 app.post('/signin', login);
 
 app.post('/signup', createUser);
@@ -33,5 +32,6 @@ app.post('/signup', createUser);
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Routes not found' });
 });
+app.use(error);
 
 app.listen(PORT);
