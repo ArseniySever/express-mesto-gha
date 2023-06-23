@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-const { validateUserCreate, validateUserLogin } = require('./middlewares/joi');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
@@ -29,9 +28,9 @@ app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardsRoutes);
 app.use(errors());
 
-app.post('/signup', validateUserCreate, createUser);
+app.post('/signup', createUser);
 
-app.post('/signin', validateUserLogin, login);
+app.post('/signin', login);
 
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Routes not found' });
