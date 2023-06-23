@@ -9,6 +9,12 @@ const login = celebrate({
     avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
   }),
 });
+const validateUserLogin = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+});
 
 const getUser = celebrate({
   params: Joi.object().keys({
@@ -43,5 +49,5 @@ const checkIdCard = celebrate({
 });
 
 module.exports = {
-  login, getUser, updateUser, updateAvatar, createCard, checkIdCard,
+  login, validateUserLogin, getUser, updateUser, updateAvatar, createCard, checkIdCard,
 };
