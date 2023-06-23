@@ -8,7 +8,7 @@ const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const { auth } = require('./middlewares/auth');
 const error = require('./middlewares/error');
-const celebrate = require('./middlewares/joi');
+const { celebrate } = require('./middlewares/joi');
 
 const { login, createUser } = require('./controllers/users');
 
