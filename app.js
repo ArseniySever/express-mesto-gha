@@ -8,6 +8,8 @@ const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const { auth } = require('./middlewares/auth');
 const error = require('./middlewares/error');
+const celebrate = require('./middlewares/joi');
+
 const { login, createUser } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
@@ -33,5 +35,6 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Routes not found' });
 });
 app.use(error);
+app.use(celebrate);
 
 app.listen(PORT);
