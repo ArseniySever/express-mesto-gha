@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const { UnauthorizedError } = require('../error/NotFoundError');
+const { UnauthorizedError } = require('../error/UnauthorizedError');
 
 const auth = (req, res, next) => {
   try {

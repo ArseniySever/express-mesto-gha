@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
+const { celebrate, Joi } = require('celebrate');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
@@ -26,9 +27,23 @@ app.use(helmet());
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardsRoutes);
 
-app.post('/signup', createUser);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+  }),
+}), createUser);
 
-app.post('/signin', login);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+}), login);
+
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Routes not found' });
 });
