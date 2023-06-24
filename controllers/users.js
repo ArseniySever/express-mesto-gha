@@ -14,8 +14,8 @@ const getUsers = (req, res, next) => {
     .then((users) => {
       res.send(users);
     })
-    .catch(() => {
-      next(new ConflictError('Server Error'));
+    .catch((err) => {
+      next(err);
     });
 };
 
