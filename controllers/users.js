@@ -19,7 +19,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.params;
+  const { userId } = req.user._id;
 
   User.findById(userId)
     .then((user) => {
@@ -132,7 +132,7 @@ const login = (req, res, next) => {
 };
 
 const resumeNowProfile = (req, res, next) => {
-  const { userId } = req.params;
+  const { userId } = req.user._id;
 
   User.findById(userId)
     .then((user) => {
