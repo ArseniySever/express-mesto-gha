@@ -12,7 +12,7 @@ const SALT_LENGTH = 10;
 const getUsers = (req, res, next) => {
   try {
     const users = User.find({});
-    res.send(users);
+    res.send({data: users});
   } catch (err) {
     next(err);
   }
