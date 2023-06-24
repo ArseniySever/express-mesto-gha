@@ -41,7 +41,7 @@ const deleteCardsById = (req, res, next) => {
       throw new ForbiddenError('You cant delete not your card');
     }
     Card.findByIdAndRemove(cardId);
-    res.send({ data: card });
+    res.send(card);
   } catch (err) {
     next(err);
   }
@@ -49,7 +49,7 @@ const deleteCardsById = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   try {
-    const { cardId } = req.body;
+    const { cardId } = req.req.user._id;
     const card = Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: cardId } },
@@ -58,7 +58,7 @@ const likeCard = (req, res, next) => {
     if (!card) {
       throw new NotFoundError('Card not found');
     }
-    res.send({ data: card });
+    res.send(card);
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));
@@ -79,7 +79,7 @@ const dislikeCard = (req, res, next) => {
     if (!card) {
       throw new NotFoundError('Card not found');
     }
-    res.send({ data: card });
+    res.send(card);
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));
