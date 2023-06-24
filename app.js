@@ -10,13 +10,14 @@ const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const error = require('./middlewares/error');
 const { NotFoundError } = require('./error/NotFoundError');
+const imgConst = require('./utils/imgConstants');
 
 const { login, createUser } = require('./controllers/users');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 mongoose
-  .connect('mongodb://127.0.0.1:27017/mestodb', {
+  .connect(DB_URL, {
     useNewUrlParser: true,
   });
 
@@ -34,7 +35,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+    avatar: Joi.string().regex(imgConst),
   }).unknown(true),
 }), createUser);
 
@@ -48,8 +49,8 @@ app.post('/signin', celebrate({
 app.use('/*', () => {
   throw new NotFoundError('Inncorect link');
 });
+app.use(errors());
 
 app.use(error);
-app.use(errors());
 
 app.listen(PORT);

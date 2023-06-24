@@ -8,12 +8,13 @@ const {
   resumeAvatar,
   resumeNowProfile,
 } = require('../controllers/users');
+const imgConst = require('../utils/imgConstants');
 
 router.get('/', getUsers);
 
 router.get('/:userId', celebrate({
   body: Joi.object().keys({
-    id: Joi.string().alphanum().length(24),
+    id: Joi.string().length(24).hex().required(),
   }),
 }), getUserById);
 
@@ -28,7 +29,7 @@ router.get('/me', resumeNowProfile);
 
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+    avatar: Joi.string().regex(imgConst),
   }),
 }), resumeAvatar);
 

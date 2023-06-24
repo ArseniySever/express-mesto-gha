@@ -28,7 +28,7 @@ const getUserById = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new ValidationError('Invalid'));
       } else {
-        next(new ConflictError('Server Error'));
+        next(err);
       }
     });
 };
@@ -50,7 +50,7 @@ const createUser = (req, res, next) => {
         avatar,
       })
         .then((user) => {
-          res.send(user);
+          res.status(201).send(user);
         })
         .catch((err) => {
           if (err.name === 'CastError' || err.name === 'Validation failed') {
@@ -104,25 +104,25 @@ const resumeAvatar = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new NotFoundError('Incorrect data');
       } else {
-        next(new ConflictError('Server Error'));
+        next(err);
       }
     });
 };
 
 const login = (req, res, next) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
 
-  User.findOne({ email }).select('+password')
+  User.findOne({ email, password }).select('+password')
     .then((user) => {
       res.send({
-        token: jwt.sign({ _id: user }, 'super-strong-secret', { expiresIn: '10d' }),
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
       });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new UnauthorizedError('UNAUTHORIZED');
       } else {
-        next(new ConflictError('Server Error'));
+        next(new UnauthorizedError('Server Error'));
       }
     });
 };
@@ -141,7 +141,7 @@ const resumeNowProfile = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new NotFoundError('Invalid id');
       } else {
-        next(new ConflictError('Server Error'));
+        next(err);
       }
     });
 };
