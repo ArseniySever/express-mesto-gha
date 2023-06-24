@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
+const { errors } = require('celebrate');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
@@ -47,5 +48,6 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Routes not found' });
 });
 app.use(error);
+app.use(errors);
 
 app.listen(PORT);
