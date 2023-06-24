@@ -45,9 +45,8 @@ app.post('/signin', celebrate({
   }).unknown(true),
 }), login);
 
-app.use('*', (req, res, next) => {
-  next(new ForbiddenError('Routes not found'));
-});
+app.use('*', new ForbiddenError('Routes not found'));
+
 app.use(error);
 app.use(errors());
 
