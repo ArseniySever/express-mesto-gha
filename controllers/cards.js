@@ -5,49 +5,45 @@ const { ForbiddenError } = require('../error/ForbiddenError');
 const { NotFoundError } = require('../error/NotFoundError');
 
 function getCards(req, res, next) {
-  return Card.find({})
-    .then((cards) => {
-      res.send({ data: cards });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  try {
+    const cards = Card.find({});
+    res.send(cards);
+  } catch (err) {
+    next(err);
+  }
 }
 
 const createCards = (req, res, next) => {
-  const { name, link } = req.body;
-  const { _id } = req.user;
-  return Card.create({ name, link, owner: _id })
-    .then((card) => {
-      res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new ValidationError('Server Error'));
-        return;
-      }
-      next(err);
-    });
+  try {
+    const { name, link } = req.body;
+    const { _id } = req.user;
+    const card = Card.create({ name, link, owner: _id });
+    res.send(card);
+  } catch (err) {
+    if (err.name === 'CastError' || err.name === 'ValidationError') {
+      next(new ValidationError('Server Error'));
+      return;
+    }
+    next(err);
+  }
 };
 
 const deleteCardsById = (req, res, next) => {
-  const { cardId } = req.params;
-  const card = Card.findById(cardId).populate('owner');
-  if (!card) {
-    throw new NotFoundError('Card not found');
-  }
-  const ownerId = card.owner.id;
-  const userId = req.user._id;
-  if (ownerId !== userId) {
-    throw new ForbiddenError('You cant delete not your card');
-  } else {
-    Card.findByIdAndRemove(cardId)
-      .then(() => {
-        res.send({ data: card });
-      })
-      .catch((err) => {
-        next(err);
-      });
+  try {
+    const { cardId } = req.params;
+    const card = Card.findById(cardId).populate('owner');
+    if (!card) {
+      throw new NotFoundError('Card not found');
+    }
+    const ownerId = card.owner.id;
+    const userId = req.user._id;
+    if (ownerId !== userId) {
+      throw new ForbiddenError('You cant delete not your card');
+    }
+    Card.findByIdAndRemove(cardId);
+    res.send(card);
+  } catch (err) {
+    next(err);
   }
 };
 
