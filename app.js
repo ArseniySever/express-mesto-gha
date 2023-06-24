@@ -9,6 +9,7 @@ const { errors } = require('celebrate');
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const error = require('./middlewares/error');
+const { ForbiddenError } = require('./error/ForbiddenError');
 
 const { login, createUser } = require('./controllers/users');
 
@@ -44,8 +45,8 @@ app.post('/signin', celebrate({
   }).unknown(true),
 }), login);
 
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Routes not found' });
+app.use('*', (req, res, next) => {
+  next(new ForbiddenError('Routes not found'));
 });
 app.use(error);
 app.use(errors());
