@@ -10,7 +10,6 @@ const {
 } = require('../controllers/cards');
 const { imgConst } = require('../utils/constants');
 
-
 router.get('/', getCards);
 
 router.post('/', celebrate({
