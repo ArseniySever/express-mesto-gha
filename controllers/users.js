@@ -8,6 +8,7 @@ const { NotFoundError } = require('../error/NotFoundError');
 const { UnauthorizedError } = require('../error/NotFoundError');
 
 const SALT_LENGTH = 10;
+
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
@@ -114,7 +115,7 @@ const resumeAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email } = req.body;
 
-  return User.findOne({ email }).select('+password')
+  User.findOne({ email }).select('+password')
     .then((user) => {
       res.send({
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
