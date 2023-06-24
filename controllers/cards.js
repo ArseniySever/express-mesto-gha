@@ -16,7 +16,7 @@ function getCards(req, res, next) {
 const createCards = (req, res, next) => {
   try {
     const { name, link } = req.body;
-    const { _id } = req.user._id;
+    const { _id } = req.user;
     const card = Card.create({ name, link, owner: _id });
     res.send({ data: card });
   } catch (err) {
@@ -30,7 +30,7 @@ const createCards = (req, res, next) => {
 
 const deleteCardsById = (req, res, next) => {
   try {
-    const { cardId } = req.card._id;
+    const { cardId } = req.params;
     const card = Card.findById(cardId).populate('owner');
     if (!card) {
       throw new NotFoundError('Card not found');
@@ -49,7 +49,7 @@ const deleteCardsById = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   try {
-    const cardId = req.card._id;
+    const cardId = req.user._id;
     const card = Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: cardId } },
