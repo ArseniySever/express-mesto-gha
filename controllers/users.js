@@ -27,14 +27,14 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ValidationError('Invalid'));
-      } else {
-        next(new ConflictError('Server Error'));
+        return;
       }
+      next(err);
     });
 };
 
@@ -88,7 +88,7 @@ const resumeProfile = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new NotFoundError('Incorrect data');
       } else {
-        next(new ConflictError('Server Error'));
+        next(err);
       }
     });
 };
