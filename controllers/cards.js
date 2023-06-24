@@ -22,11 +22,11 @@ const createCards = (req, res, next) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new ValidationError('Server Error'));
-      } else {
-        next(err);
+        return;
       }
+      next(err);
     });
 };
 
@@ -35,14 +35,14 @@ const deleteCardsById = (req, res, next) => {
   const card = Card.findById(cardId).populate('owner');
   const ownerId = card.owner.id;
   const userId = req.user._id;
+  if (!card) {
+    throw new NotFoundError('Card not found');
+  }
   if (ownerId !== userId) {
     throw new ForbiddenError('You cant delete not your card');
   } else {
     Card.findByIdAndRemove(cardId)
-      .then((cards) => {
-        if (!cards) {
-          throw new NotFoundError('Card not found');
-        }
+      .then(() => {
         res.send({ data: card });
       })
       .catch((err) => {
