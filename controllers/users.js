@@ -26,7 +26,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ data: user });
+      return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -40,29 +40,21 @@ const getUserById = (req, res, next) => {
 const createUser = (req, res, next) => {
   const {
     email,
-    password,
     name,
     about,
     avatar,
   } = req.body;
-  const passwordHash = bcrypt.hash(password, SALT_LENGTH);
+  const passwordHash = bcrypt.hash(req.body.password, SALT_LENGTH);
 
-  return User.create({
+  User.create({
     email,
-    password,
+    password: passwordHash,
     name,
     about,
     avatar,
   })
     .then((user) => {
-      res.send({
-        email: user.email,
-        password: passwordHash,
-        _id: user._id,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'Validation failed') {
@@ -87,7 +79,7 @@ const resumeProfile = (req, res, next) => {
     if (!user) {
       throw new NotFoundError('Incorrect data');
     }
-    res.send({ user });
+    res.send(user);
   } catch (err) {
     next(err);
   }
@@ -104,7 +96,7 @@ const resumeAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError('User not found'));
-      } else res.send({ user });
+      } res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
