@@ -8,7 +8,6 @@ const {
   resumeAvatar,
   resumeNowProfile,
 } = require('../controllers/users');
-const imgConst = require('../utils/imgConstants');
 
 router.get('/', getUsers);
 
@@ -29,7 +28,7 @@ router.get('/me', resumeNowProfile);
 
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(imgConst),
+    avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
   }),
 }), resumeAvatar);
 
