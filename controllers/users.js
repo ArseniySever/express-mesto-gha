@@ -14,8 +14,8 @@ const getUsers = (req, res, next) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      next(new ConflictError('Server Error'));
     });
 };
 
@@ -27,14 +27,14 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      res.send({ data: user });
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ValidationError('Invalid'));
-        return;
+      } else {
+        next(new ConflictError('Server Error'));
       }
-      next(err);
     });
 };
 
@@ -66,11 +66,14 @@ const createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ValidationError('Server Error'));
-      } else {
-        next(new ConflictError('Server Error'));
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        next(new ValidationError('Incorrect data'));
+        return;
+      } if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+        return;
       }
+      next(err);
     });
 };
 
@@ -88,7 +91,7 @@ const resumeProfile = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new NotFoundError('Incorrect data');
       } else {
-        next(err);
+        next(new ConflictError('Server Error'));
       }
     });
 };
