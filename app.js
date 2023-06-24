@@ -26,6 +26,7 @@ app.use(helmet());
 
 app.use('/users', userRoutes);
 app.use('/cards', cardsRoutes);
+app.use(errors);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -48,6 +49,5 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Routes not found' });
 });
 app.use(error);
-app.use(errors);
 
 app.listen(PORT);
