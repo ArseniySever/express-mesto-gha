@@ -88,9 +88,10 @@ const resumeProfile = (req, res, next) => {
 
 const resumeAvatar = (req, res, next) => {
   const { avatar } = req.body;
+  const { userId } = req.params;
 
   User.findByIdAndUpdate(
-    req.user,
+    userId,
     { avatar },
     { new: true, runValidators: true },
   )

@@ -12,7 +12,7 @@ const getCards = (req, res, next) => {
 
 const createCards = (req, res, next) => {
   const { name, link } = req.body;
-  const owner = req.user;
+  const { owner } = req.user;
   Card.create({ name, link, owner })
     .then((card) => res
       .send({ data: card }))
