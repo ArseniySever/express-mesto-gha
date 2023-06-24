@@ -26,7 +26,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ user });
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -139,7 +139,7 @@ const resumeNowProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send(user);
+      return res.send({ data: user});
     })
     .catch((err) => {
       if (err.name === 'CastError') {
