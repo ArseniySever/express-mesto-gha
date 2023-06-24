@@ -29,7 +29,7 @@ router.get('/me', resumeNowProfile);
 
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.required().pattern(imgConst),
+    avatar: Joi.string().pattern(imgConst).required(),
   }),
 }), resumeAvatar);
 
