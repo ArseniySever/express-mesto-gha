@@ -4,14 +4,11 @@ const { ValidationError } = require('../error/ValidationError');
 const { ForbiddenError } = require('../error/ForbiddenError');
 const { NotFoundError } = require('../error/NotFoundError');
 
-function getCards(req, res, next) {
-  try {
-    const cards = Card.find({});
-    res.send({ cards });
-  } catch (err) {
-    next(err);
-  }
-}
+const getCards = (req, res, next) => {
+  Card.find({})
+    .then((cards) => res.send(cards))
+    .catch(next);
+};
 
 const createCards = (req, res, next) => {
   try {
