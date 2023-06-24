@@ -10,13 +10,12 @@ const { UnauthorizedError } = require('../error/NotFoundError');
 const SALT_LENGTH = 10;
 
 const getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => {
-      res.send(users);
-    })
-    .catch(() => {
-      next(new ConflictError('Server Error'));
-    });
+  try {
+    const users = User.find({});
+    res.send(users);
+  } catch (err) {
+    next(err);
+  }
 };
 
 const getUserById = (req, res, next) => {
@@ -27,7 +26,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ data: user });
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -103,7 +102,7 @@ const resumeAvatar = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -140,7 +139,7 @@ const resumeNowProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ data: user });
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
