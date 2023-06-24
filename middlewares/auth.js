@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const { UnauthorizedError } = require('../error/UnauthorizedError');
 
-module.exports = (req, res, next) => {
+function auth(req, res, next) {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new UnauthorizedError('UnregisteredUser');
@@ -16,4 +16,6 @@ module.exports = (req, res, next) => {
   }
   req.user = payload;
   next();
-};
+}
+
+module.exports = { auth };
