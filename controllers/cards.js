@@ -33,11 +33,11 @@ const createCards = (req, res, next) => {
 const deleteCardsById = (req, res, next) => {
   const { cardId } = req.params;
   const card = Card.findById(cardId).populate('owner');
-  const ownerId = card.owner.id;
-  const userId = req.user._id;
   if (!card) {
     throw new NotFoundError('Card not found');
   }
+  const ownerId = card.owner.id;
+  const userId = req.user._id;
   if (ownerId !== userId) {
     throw new ForbiddenError('You cant delete not your card');
   } else {
@@ -52,46 +52,44 @@ const deleteCardsById = (req, res, next) => {
 };
 
 const likeCard = (req, res, next) => {
-  const cardId = req.user._id;
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: cardId } },
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Card not found');
-      }
-      res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError('Invalid id'));
-      } else {
-        next(err);
-      }
-    });
+  try {
+    const cardId = req.user._id;
+    const card = Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $addToSet: { likes: cardId } },
+      { new: true },
+    );
+    if (!card) {
+      throw new NotFoundError('Card not found');
+    }
+    res.send({ data: card });
+  } catch (err) {
+    if (err.name === 'CastError' || err.name === 'ValidationError') {
+      next(new ValidationError('Invalid id'));
+      return;
+    }
+    next(err);
+  }
 };
 
 const dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Card not found');
-      }
-      res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError('Invalid id'));
-      } else {
-        next(err);
-      }
-    });
+  try {
+    const card = Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user._id } },
+      { new: true },
+    );
+    if (!card) {
+      throw new NotFoundError('Card not found');
+    }
+    res.send({ data: card });
+  } catch (err) {
+    if (err.name === 'CastError' || err.name === 'ValidationError') {
+      next(new ValidationError('Invalid id'));
+      return;
+    }
+    next(err);
+  }
 };
 
 module.exports = {
