@@ -19,7 +19,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.params._id;
+  const { userId } = req.params;
 
   User.findById(userId)
     .then((user) => {
