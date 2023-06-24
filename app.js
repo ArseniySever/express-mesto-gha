@@ -45,9 +45,10 @@ app.post('/signin', celebrate({
   }).unknown(true),
 }), login);
 
-app.post('*', (req, res, next) => {
-  next(new ForbiddenError('Inncorect link'));
+app.use('*', () => {
+  throw new ForbiddenError('Inncorect link');
 });
+
 app.use(error);
 app.use(errors());
 
