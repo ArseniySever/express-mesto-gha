@@ -12,8 +12,8 @@ const getCards = (req, res, next) => {
 
 const createCards = (req, res, next) => {
   const { name, link } = req.body;
-  const { owner } = req.user;
-  Card.create({ name, link, owner })
+  const { userId } = req.user;
+  Card.create({ name, link, owner: userId })
     .then((card) => res
       .send({ data: card }))
     .catch((err) => {
@@ -27,8 +27,8 @@ const createCards = (req, res, next) => {
 
 const deleteCardsById = (req, res, next) => {
   try {
-    const { cardId } = req.body;
-    const card = Card.findById(cardId).populate('owner');
+    const { id: cardId } = req.params;
+    const card = Card.findById({ _id: cardId }).populate('owner');
     if (!card) {
       throw new NotFoundError('Card not found');
     }
@@ -46,9 +46,9 @@ const deleteCardsById = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   try {
-    const { cardId } = req.req.user;
+    const { cardId } = req.params;
     const card = Card.findByIdAndUpdate(
-      req.params.cardId,
+      cardId,
       { $addToSet: { likes: cardId } },
       { new: true },
     );
@@ -67,9 +67,9 @@ const likeCard = (req, res, next) => {
 
 const dislikeCard = (req, res, next) => {
   try {
-    const userId = req.params.cardId;
+    const userId = req.params;
     const card = Card.findByIdAndUpdate(
-      req.params.cardId,
+      req.params,
       { $pull: { likes: userId } },
       { new: true },
     );
