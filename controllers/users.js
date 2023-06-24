@@ -67,13 +67,14 @@ const createUser = (req, res, next) => {
 
 const resumeProfile = (req, res, next) => {
   const { name, about } = req.body;
+  const { userId } = req.user;
   User.findByIdAndUpdate(
-    req.user,
+    userId,
     { name, about },
     { new: true, runValidators: true },
   )
     .then((user) => {
-      if (user) return res.send({ user });
+      if (user) return res.send(user);
       throw new NotFoundError('Incorrect data');
     })
     .catch((err) => {
@@ -96,7 +97,7 @@ const resumeAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError('User not found'));
-      } res.send({ user });
+      } res.send(user.avatar);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
