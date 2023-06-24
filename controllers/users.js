@@ -12,7 +12,7 @@ const SALT_LENGTH = 10;
 const getUsers = (req, res, next) => {
   try {
     const users = User.find({});
-    res.send({ data: users });
+    res.send({ users });
   } catch (err) {
     next(err);
   }
@@ -87,7 +87,7 @@ const resumeProfile = (req, res, next) => {
     if (!user) {
       throw new NotFoundError('Incorrect data');
     }
-    res.send(user);
+    res.send({ user });
   } catch (err) {
     next(err);
   }
@@ -104,7 +104,7 @@ const resumeAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError('User not found'));
-      } else res.send(user);
+      } else res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -141,7 +141,7 @@ const resumeNowProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ data: user });
+      return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
