@@ -62,7 +62,7 @@ const likeCard = (req, res, next) => {
     if (!card) {
       throw new NotFoundError('Card not found');
     }
-    res.send({ data: card });
+    res.send(card);
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));
@@ -82,7 +82,7 @@ const dislikeCard = (req, res, next) => {
     if (!card) {
       throw new NotFoundError('Card not found');
     }
-    res.send({ data: card });
+    res.send(card);
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));

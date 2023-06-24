@@ -78,23 +78,22 @@ const createUser = (req, res, next) => {
 };
 
 const resumeProfile = (req, res, next) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    { new: true, runValidators: true },
-  )
-    .then((user) => {
-      res.send({ data: user });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new NotFoundError('Incorrect data');
-      } else {
-        next(new ConflictError('Server Error'));
-      }
-    });
+  try {
+    const { name, about } = req.body;
+    const user = User.findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: true, runValidators: true },
+    );
+    if (!user) {
+      throw new NotFoundError('Incorrect data');
+    }
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
 };
+
 const resumeAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
