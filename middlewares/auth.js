@@ -4,9 +4,9 @@ const { UnauthorizedError } = require('../error/UnauthorizedError');
 
 const auth = (req, res, next) => {
   try {
-    const { authorization } = req.headers;
+    const { authorization } = req.cookies.jwt;
     if (!authorization || !authorization.startsWith('Bearer ')) {
-      throw new UnauthorizedError('UNAUTHORIZED');
+      throw new UnauthorizedError('UnregisteredUser');
     }
     const token = authorization.replace('Bearer ', '');
     let payload;
