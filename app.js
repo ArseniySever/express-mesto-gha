@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
-const { errors } = require('celebrate');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
@@ -26,7 +25,6 @@ app.use(helmet());
 
 app.use('/users', userRoutes);
 app.use('/cards', cardsRoutes);
-app.use(errors);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
