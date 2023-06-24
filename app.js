@@ -23,9 +23,10 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(helmet());
+app.use(auth);
 
-app.use('/users', auth, userRoutes);
-app.use('/cards', auth, cardsRoutes);
+app.use('/users', userRoutes);
+app.use('/cards', cardsRoutes);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
