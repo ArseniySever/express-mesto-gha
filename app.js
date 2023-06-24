@@ -9,7 +9,7 @@ const { errors } = require('celebrate');
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const error = require('./middlewares/error');
-const { ForbiddenError } = require('./error/ForbiddenError');
+const { NotFoundError } = require('./error/NotFoundError');
 
 const { login, createUser } = require('./controllers/users');
 
@@ -46,7 +46,7 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use('*', () => {
-  throw new ForbiddenError('Inncorect link');
+  throw new NotFoundError('Inncorect link');
 });
 
 app.use(error);
