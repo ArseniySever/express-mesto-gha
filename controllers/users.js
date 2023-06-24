@@ -15,14 +15,14 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.user._id;
 
   User.findById(id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ user });
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
