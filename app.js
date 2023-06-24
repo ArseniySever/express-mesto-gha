@@ -45,7 +45,7 @@ app.post('/signin', celebrate({
   }).unknown(true),
 }), login);
 
-app.use('*', () => {
+app.use('/*', () => {
   throw new NotFoundError('Inncorect link');
 });
 

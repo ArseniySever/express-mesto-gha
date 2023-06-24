@@ -7,7 +7,7 @@ const { NotFoundError } = require('../error/NotFoundError');
 function getCards(req, res, next) {
   try {
     const cards = Card.find({});
-    res.send({ data: cards });
+    res.send({ cards });
   } catch (err) {
     next(err);
   }
@@ -18,7 +18,7 @@ const createCards = (req, res, next) => {
     const { name, link } = req.body;
     const { _id } = req.user;
     const card = Card.create({ name, link, owner: _id });
-    res.send({ data: card });
+    res.send({ card });
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Server Error'));
