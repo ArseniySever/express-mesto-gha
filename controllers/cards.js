@@ -13,9 +13,9 @@ const getCards = (req, res, next) => {
 const createCards = (req, res, next) => {
   try {
     const { name, link } = req.body;
-    const { _id } = req.user;
-    const card = Card.create({ name, link, owner: _id });
-    res.send({ card });
+    const owner = req.user.payload;
+    const card = Card.create({ name, link, owner });
+    res.send(card);
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Server Error'));
