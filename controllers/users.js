@@ -10,7 +10,7 @@ const { UnauthorizedError } = require('../error/NotFoundError');
 const getUsers = (req, res, next) => {
   try {
     const users = User.find({});
-    res.send({ users });
+    res.send(users);
   } catch (err) {
     next(err);
   }
@@ -132,7 +132,7 @@ const resumeNowProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ user });
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
