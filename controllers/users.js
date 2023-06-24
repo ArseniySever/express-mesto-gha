@@ -7,8 +7,6 @@ const { ValidationError } = require('../error/ValidationError');
 const { NotFoundError } = require('../error/NotFoundError');
 const { UnauthorizedError } = require('../error/NotFoundError');
 
-const SALT_LENGTH = 10;
-
 const getUsers = (req, res, next) => {
   try {
     const users = User.find({});
@@ -40,32 +38,32 @@ const getUserById = (req, res, next) => {
 const createUser = (req, res, next) => {
   const {
     email,
-    password,
     name,
     about,
     avatar,
   } = req.body;
-  const passwordHash = bcrypt.hash(password, SALT_LENGTH);
-
-  User.create({
-    email,
-    password: passwordHash,
-    name,
-    about,
-    avatar,
-  })
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'Validation failed') {
-        next(new ValidationError('Incorrect data'));
-        return;
-      } if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
-        return;
-      }
-      next(err);
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => {
+      User.create({
+        email,
+        password: hash,
+        name,
+        about,
+        avatar,
+      })
+        .then((user) => {
+          res.send(user);
+        })
+        .catch((err) => {
+          if (err.name === 'CastError' || err.name === 'Validation failed') {
+            next(new ValidationError('Incorrect data'));
+            return;
+          } if (err.code === 11000) {
+            next(new ConflictError('Пользователь с таким email уже существует'));
+            return;
+          }
+          next(err);
+        });
     });
 };
 
