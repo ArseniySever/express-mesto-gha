@@ -7,7 +7,6 @@ const { celebrate, Joi } = require('celebrate');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
-const { auth } = require('./middlewares/auth');
 const error = require('./middlewares/error');
 
 const { login, createUser } = require('./controllers/users');
@@ -24,8 +23,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(helmet());
 
-app.use('/users', auth, userRoutes);
-app.use('/cards', auth, cardsRoutes);
+app.use('/users', userRoutes);
+app.use('/cards', cardsRoutes);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
