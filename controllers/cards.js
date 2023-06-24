@@ -6,13 +6,13 @@ const { NotFoundError } = require('../error/NotFoundError');
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send({ cards }))
     .catch(next);
 };
 
 const createCards = (req, res, next) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.user;
   Card.create({ name, link, owner })
     .then((card) => res
       .send({ data: card }))
@@ -33,7 +33,7 @@ const deleteCardsById = (req, res, next) => {
       throw new NotFoundError('Card not found');
     }
     const ownerId = card.owner;
-    const userId = req.user._id;
+    const userId = req.user;
     if (ownerId !== userId) {
       throw new ForbiddenError('You cant delete not your card');
     }
@@ -46,7 +46,7 @@ const deleteCardsById = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   try {
-    const { cardId } = req.req.user._id;
+    const { cardId } = req.req.user;
     const card = Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: cardId } },
