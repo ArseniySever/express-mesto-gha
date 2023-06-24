@@ -15,7 +15,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.user._id;
+  const { userId } = req.user;
 
   User.findById(userId)
     .then((user) => {
@@ -110,7 +110,7 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
+        token: jwt.sign({ _id: user }, 'super-strong-secret', { expiresIn: '10d' }),
       });
     })
     .catch((err) => {
@@ -123,14 +123,14 @@ const login = (req, res, next) => {
 };
 
 const resumeNowProfile = (req, res, next) => {
-  const { userId } = req.user._id;
+  const { userId } = req.user;
 
   User.findById(userId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ data: user });
+      return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
