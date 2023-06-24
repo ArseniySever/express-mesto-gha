@@ -8,12 +8,10 @@ const { NotFoundError } = require('../error/NotFoundError');
 const { UnauthorizedError } = require('../error/NotFoundError');
 
 const getUsers = (req, res, next) => {
-  try {
-    const users = User.find({});
-    res.send({ users });
-  } catch (err) {
-    next(err);
-  }
+  User
+    .find({})
+    .then((users) => res.send({ users }))
+    .catch(next);
 };
 
 const getUserById = (req, res, next) => {
