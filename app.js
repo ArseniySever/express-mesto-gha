@@ -10,7 +10,6 @@ const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const error = require('./middlewares/error');
 const { NotFoundError } = require('./error/NotFoundError');
-const imgConst = require('./utils/imgConstants');
 
 const { login, createUser } = require('./controllers/users');
 
@@ -35,7 +34,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex({ imgConst }),
+    avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
   }).unknown(true),
 }), createUser);
 
