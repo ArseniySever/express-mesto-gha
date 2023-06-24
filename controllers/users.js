@@ -87,7 +87,7 @@ const resumeProfile = (req, res, next) => {
     if (!user) {
       throw new NotFoundError('Incorrect data');
     }
-    res.send({ data: user });
+    res.send(user);
   } catch (err) {
     next(err);
   }
@@ -102,7 +102,9 @@ const resumeAvatar = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send({ data: user });
+      if (!user) {
+        next(new NotFoundError('User not found'));
+      } else res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
