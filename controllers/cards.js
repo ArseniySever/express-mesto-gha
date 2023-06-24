@@ -11,18 +11,18 @@ const getCards = (req, res, next) => {
 };
 
 const createCards = (req, res, next) => {
-  try {
-    const { name, link } = req.body;
-    const owner = req.user.payload;
-    const card = Card.create({ name, link, owner });
-    res.send(card);
-  } catch (err) {
-    if (err.name === 'CastError' || err.name === 'ValidationError') {
-      next(new ValidationError('Server Error'));
-      return;
-    }
-    next(err);
-  }
+  const { name, link } = req.body;
+  const owner = req.user._id;
+  Card.create({ name, link, owner })
+    .then((card) => res
+      .send(card))
+    .catch((err) => {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        next(new ValidationError('Server Error'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const deleteCardsById = (req, res, next) => {
