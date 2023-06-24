@@ -22,7 +22,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ data: user });
+      return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -69,14 +69,14 @@ const resumeProfile = (req, res, next) => {
   try {
     const { name, about } = req.body;
     const user = User.findByIdAndUpdate(
-      req.user._id,
+      req.user,
       { name, about },
       { new: true, runValidators: true },
     );
     if (!user) {
       throw new NotFoundError('Incorrect data');
     }
-    res.send({ data: user });
+    res.send({ user });
   } catch (err) {
     next(err);
   }
@@ -86,14 +86,14 @@ const resumeAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
-    req.user._id,
+    req.user,
     { avatar },
     { new: true, runValidators: true },
   )
     .then((user) => {
       if (!user) {
         next(new NotFoundError('User not found'));
-      } res.send({ data: user });
+      } res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
