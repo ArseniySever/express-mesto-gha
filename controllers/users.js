@@ -66,7 +66,7 @@ const createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'Validation failed') {
         next(new ValidationError('Incorrect data'));
         return;
       } if (err.code === 11000) {
