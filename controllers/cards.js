@@ -7,7 +7,7 @@ const { NotFoundError } = require('../error/NotFoundError');
 function getCards(req, res, next) {
   try {
     const cards = Card.find({});
-    res.send(cards);
+    res.send({ data: cards });
   } catch (err) {
     next(err);
   }
@@ -18,7 +18,7 @@ const createCards = (req, res, next) => {
     const { name, link } = req.body;
     const { _id } = req.user;
     const card = Card.create({ name, link, owner: _id });
-    res.send(card);
+    res.send({ data: card });
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Server Error'));
@@ -41,7 +41,7 @@ const deleteCardsById = (req, res, next) => {
       throw new ForbiddenError('You cant delete not your card');
     }
     Card.findByIdAndRemove(cardId);
-    res.send(card);
+    res.send({ data: card });
   } catch (err) {
     next(err);
   }
@@ -58,7 +58,7 @@ const likeCard = (req, res, next) => {
     if (!card) {
       throw new NotFoundError('Card not found');
     }
-    res.send(card);
+    res.send({ data: card });
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));
@@ -78,7 +78,7 @@ const dislikeCard = (req, res, next) => {
     if (!card) {
       throw new NotFoundError('Card not found');
     }
-    res.send(card);
+    res.send({ data: card });
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));
