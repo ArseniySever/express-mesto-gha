@@ -17,7 +17,7 @@ router.post('/', celebrate({
     link: Joi.string()
       .required()
       .regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
-  }),
+  }).unknown(true),
 }), createCards);
 
 router.delete('/:cardId', deleteCardsById);
