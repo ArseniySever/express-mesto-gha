@@ -15,9 +15,9 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.params;
+  const { id } = req.params;
 
-  User.findById(userId)
+  User.findById(id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('User not found');
@@ -74,7 +74,7 @@ const resumeProfile = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      if (user) return res.send(user);
+      if (user) return res.send({ user });
       throw new NotFoundError('Incorrect data');
     })
     .catch((err) => {
