@@ -12,7 +12,7 @@ const getUsers = (req, res, next) => {
     .then((users) => {
       if (!users) {
         return next(new UnauthorizedError('User not found'));
-      } return res.send({ users });
+      } return res.send({ data: users });
     })
     .catch(next);
 };
