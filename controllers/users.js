@@ -8,9 +8,12 @@ const { NotFoundError } = require('../error/NotFoundError');
 const { UnauthorizedError } = require('../error/NotFoundError');
 
 const getUsers = (req, res, next) => {
-  User
-    .find({})
-    .then((users) => res.send({ users }))
+  User.find({})
+    .then((users) => {
+      if (!users) {
+        return next(new NotFoundError('User not found'));
+      } return res.send({ users });
+    })
     .catch(next);
 };
 
