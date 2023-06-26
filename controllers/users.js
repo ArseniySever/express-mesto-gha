@@ -115,11 +115,9 @@ const resumeAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email, password }).select('+password')
+  User.findOne({ email }).select('+password')
     .then((user) => {
-      res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
-      });
+      bcrypt.compare(password, user.password);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
