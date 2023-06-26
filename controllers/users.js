@@ -14,7 +14,13 @@ const getUsers = (req, res, next) => {
         return next(new UnauthorizedError('User not found'));
       } return res.send({ data: users });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new UnauthorizedError('UNAUTHORIZED');
+      } else {
+        next(err);
+      }
+    });
 };
 
 const getUserById = (req, res, next) => {
