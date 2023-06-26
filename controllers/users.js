@@ -122,12 +122,8 @@ const login = (req, res, next) => {
       });
       return bcrypt.compare(password, user.password);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new UnauthorizedError('UNAUTHORIZED');
-      } else {
-        next(new UnauthorizedError('Server Error'));
-      }
+    .catch(() => {
+      next(new UnauthorizedError('UNAUTHORIZED'));
     });
 };
 
