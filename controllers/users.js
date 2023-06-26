@@ -112,7 +112,7 @@ const resumeAvatar = (req, res, next) => {
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findOne({ email }).select('+password')
@@ -129,9 +129,11 @@ const login = (req, res) => {
       res.send({ message: 'Ok!' });
     })
     .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
+      if (err.name === 'ValidationError') {
+        throw new UnauthorizedError('UNAUTHORIZED');
+      } else {
+        next(new UnauthorizedError('Server Error'));
+      }
     });
 };
 
