@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const { User } = require('../models/user');
 const { ConflictError } = require('../error/ConflictError');
@@ -116,7 +117,10 @@ const login = (req, res, next) => {
 
   User.findOne({ email }).select('+password')
     .then((user) => {
-      bcrypt.compare(password, user.password);
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
+      });
+      return bcrypt.compare(password, user.password);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
