@@ -11,16 +11,10 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (!users) {
-        return next(new UnauthorizedError('User not found'));
-      } return res.send({ data: users });
+        next(new UnauthorizedError('User not found'));
+      } else { res.send({ data: users }); }
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new UnauthorizedError('UNAUTHORIZED');
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 const getUserById = (req, res, next) => {
