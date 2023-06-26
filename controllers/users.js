@@ -117,10 +117,18 @@ const login = (req, res, next) => {
 
   User.findOne({ email }).select('+password')
     .then((user) => {
+      if (!user) {
+        return Promise.reject(new UnauthorizedError('Incorrect data'));
+      }
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        return Promise.reject(new UnauthorizedError('Incorrect data'));
+      }
       res.send({
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
       });
-      return bcrypt.compare(password, user.password);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
