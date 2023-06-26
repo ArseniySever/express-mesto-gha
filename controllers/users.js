@@ -112,18 +112,26 @@ const resumeAvatar = (req, res, next) => {
     });
 };
 
-const login = (req, res, next) => {
+const login = (req, res) => {
   const { email, password } = req.body;
 
-  User.findOne({ email, password }).select('+password')
+  User.findOne({ email }).select('+password')
     .then((user) => {
       res.send({
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
       });
       return bcrypt.compare(password, user.password);
     })
-    .catch(() => {
-      next(new UnauthorizedError('UNAUTHORIZED'));
+    .then((matched) => {
+      if (!matched) {
+        Promise.reject(new NotFoundError('Incorrect data'));
+      }
+      res.send({ message: 'Ok!' });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
     });
 };
 
