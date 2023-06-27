@@ -70,7 +70,7 @@ const createUser = (req, res, next) => {
 
 const resumeProfile = (req, res, next) => {
   const { name, about } = req.body;
-  const { userId } = req.user;
+  const { userId } = req.params;
   User.findByIdAndUpdate(
     userId,
     { name, about },
@@ -133,7 +133,7 @@ const login = (req, res, next) => {
 };
 
 const resumeNowProfile = (req, res, next) => {
-  const { userId } = req.user;
+  const { userId } = req.params;
 
   User.findById(userId)
     .then((user) => {
