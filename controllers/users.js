@@ -53,7 +53,13 @@ const createUser = (req, res, next) => {
         avatar,
       })
         .then((user) => {
-          res.status(201).send(user);
+          res.status(201).send({
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+          });
         })
         .catch((err) => {
           if (err.name === 'CastError' || err.name === 'Validation failed') {
