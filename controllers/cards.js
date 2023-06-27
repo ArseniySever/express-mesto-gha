@@ -27,7 +27,7 @@ const createCards = (req, res, next) => {
 
 const deleteCardsById = (req, res, next) => {
   try {
-    const { cardId } = req.params;
+    const cardId = req.params;
     const card = Card.findById(cardId).populate('owner');
     if (!card) {
       throw new NotFoundError('Card not found');
