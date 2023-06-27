@@ -25,7 +25,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send(user);
+      return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -117,30 +117,44 @@ const login = (req, res, next) => {
 
   User.findOne({ email }).select('+password')
     .then((user) => {
-      bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          Promise.reject(new UnauthorizedError('Incorrect data'));
-        } else {
-          res.send({
-            token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
-          });
-        }
-      });
+      if (user === null) {
+        throw new UnauthorizedError('Incorrect data');
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            Promise.reject(new UnauthorizedError('Incorrect data'));
+          } else {
+            res.send({
+              token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
+            });
+          }
+        });
     })
     .catch((err) => {
-      next(new UnauthorizedError(err));
+      if (err.name === 'ValidationError') {
+        throw new UnauthorizedError('UNAUTHORIZED');
+      } else {
+        next(new UnauthorizedError('Server Error'));
+      }
     });
 };
 
 const resumeNowProfile = (req, res, next) => {
-  const { userId } = req.user;
+  const { userId } = req.user._id;
 
   User.findById(userId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('User not found');
       }
-      return res.send({ user });
+      return res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
