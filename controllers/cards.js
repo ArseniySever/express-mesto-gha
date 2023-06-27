@@ -33,7 +33,7 @@ const deleteCardsById = (req, res, next) => {
       throw new NotFoundError('Card not found');
     }
     const ownerId = card.owner;
-    const userId = req.user;
+    const { userId } = req.user;
     if (ownerId !== userId) {
       throw new ForbiddenError('You cant delete not your card');
     }
