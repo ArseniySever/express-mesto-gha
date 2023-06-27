@@ -11,8 +11,9 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (!users) {
-        next(new NotFoundError('User not found'));
-      } else { res.send({ data: users }); }
+        return next(new NotFoundError('User not found'));
+      }
+      return res.send({ data: users });
     })
     .catch(next);
 };
