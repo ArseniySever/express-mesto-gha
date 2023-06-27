@@ -5,7 +5,7 @@ const { User } = require('../models/user');
 const { ConflictError } = require('../error/ConflictError');
 const { ValidationError } = require('../error/ValidationError');
 const { NotFoundError } = require('../error/NotFoundError');
-const { UnauthorizedError } = require('../error/NotFoundError');
+const { UnauthorizedError } = require('../error/UnauthorizedError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -117,23 +117,18 @@ const login = (req, res, next) => {
 
   User.findOne({ email }).select('+password')
     .then((user) => {
-      res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
+      bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          Promise.reject(new UnauthorizedError('Incorrect data'));
+        } else {
+          res.send({
+            token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '10d' }),
+          });
+        }
       });
-      return bcrypt.compare(password, user.password);
     })
-    .then((matched) => {
-      if (!matched) {
-        Promise.reject(new NotFoundError('Incorrect data'));
-      }
-      res.send({ message: 'Ok!' });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new UnauthorizedError('UNAUTHORIZED');
-      } else {
-        next(new UnauthorizedError('Server Error'));
-      }
+    .catch(() => {
+      next(new UnauthorizedError('UNAUTHORIZED'));
     });
 };
 

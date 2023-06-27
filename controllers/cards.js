@@ -27,8 +27,8 @@ const createCards = (req, res, next) => {
 
 const deleteCardsById = (req, res, next) => {
   try {
-    const { id: cardId } = req.params;
-    const card = Card.findById({ _id: cardId }).populate('owner');
+    const { cardId } = req.params;
+    const card = Card.findById(cardId).populate('owner');
     if (!card) {
       throw new NotFoundError('Card not found');
     }
@@ -37,8 +37,9 @@ const deleteCardsById = (req, res, next) => {
     if (ownerId !== userId) {
       throw new ForbiddenError('You cant delete not your card');
     }
-    Card.findByIdAndRemove(cardId);
-    res.send({ data: card });
+    Card.findByIdAndRemove(cardId)
+      .then(() => res.send({ data: card }))
+      .catch(next);
   } catch (err) {
     next(err);
   }
