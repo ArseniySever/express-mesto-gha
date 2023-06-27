@@ -32,13 +32,13 @@ const deleteCardsById = (req, res, next) => {
     if (!card) {
       throw new NotFoundError('Card not found');
     }
-    const ownerId = card.owner;
-    const { userId } = req.user;
+    const ownerId = card.owner.id;
+    const userId = req.user._id;
     if (ownerId !== userId) {
       throw new ForbiddenError('You cant delete not your card');
     }
     Card.findByIdAndRemove(cardId)
-      .then(() => res.send({ data: card }))
+      .then(() => res.send(card))
       .catch(next);
   } catch (err) {
     next(err);
