@@ -11,7 +11,7 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (!users) {
-        next(new UnauthorizedError('User not found'));
+        next(new NotFoundError('User not found'));
       } else { res.send({ data: users }); }
     })
     .catch(next);
@@ -127,8 +127,8 @@ const login = (req, res, next) => {
         }
       });
     })
-    .catch(() => {
-      next(new UnauthorizedError('UNAUTHORIZED'));
+    .catch((err) => {
+      next(new UnauthorizedError(err));
     });
 };
 
@@ -144,7 +144,7 @@ const resumeNowProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new NotFoundError('Invalid id');
+        throw new ValidationError('Invalid id');
       } else {
         next(err);
       }
