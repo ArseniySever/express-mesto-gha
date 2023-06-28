@@ -4,8 +4,8 @@ const { UnauthorizedError } = require('../error/UnauthorizedError');
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
-  if (!authorization) {
-    throw new UnauthorizedError('Authorization is needed');
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new UnauthorizedError(res);
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -14,7 +14,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'secretkey', '');
   } catch (err) {
-    throw new UnauthorizedError('Authorization is needed');
+    throw new UnauthorizedError(res);
   }
 
   req.user = payload;
