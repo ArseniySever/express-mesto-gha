@@ -12,7 +12,7 @@ const getCards = (req, res, next) => {
 
 const createCards = (req, res, next) => {
   const { name, link } = req.body;
-  const { userId } = req.user;
+  const { userId } = req.user._id;
   Card.create({ name, link, owner: userId })
     .then((card) => res
       .send({ data: card }))
@@ -50,10 +50,10 @@ const deleteCardsById = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   try {
-    const { cardId } = req.user._id;
+    const { userId } = req.user._id;
     Card.findByIdAndUpdate(
-      req.params,
-      { $addToSet: { likes: cardId } },
+      req.params.cardId,
+      { $addToSet: { likes: userId } },
       { new: true },
     )
       .then((card) => {
