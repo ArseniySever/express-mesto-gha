@@ -15,7 +15,7 @@ function auth(req, res, next) {
     let payload;
 
     try {
-      payload = jwt.verify(token, 'secretkey');
+      payload = jwt.verify(token, 'secretkey', '');
     } catch (err) {
       throw new UnauthorizedError(
         'Для выполнения действия необходима авторизация',

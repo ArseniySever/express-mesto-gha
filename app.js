@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
+const auth = require('./middlewares/auth');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
@@ -25,10 +26,6 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(helmet());
-
-app.use('/users', userRoutes);
-app.use('/cards', cardsRoutes);
-
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
@@ -46,7 +43,12 @@ app.post('/signin', celebrate({
   }).unknown(true),
 }), login);
 
-app.use('/*', () => {
+app.use(auth);
+
+app.use('/users', userRoutes);
+app.use('/cards', cardsRoutes);
+
+app.use('/*', auth, () => {
   throw new NotFoundError('Inncorect link');
 });
 app.use(errors());

@@ -28,18 +28,21 @@ const createCards = (req, res, next) => {
 const deleteCardsById = (req, res, next) => {
   try {
     const { cardId } = req.params;
-    const card = Card.findById(cardId).populate('owner');
-    if (!card) {
-      throw new NotFoundError('Card not found');
-    }
-    const ownerId = card.owner.id;
-    const userId = req.user._id;
-    if (ownerId !== userId) {
-      throw new ForbiddenError('You cant delete not your card');
-    }
-    Card.findByIdAndRemove(cardId)
-      .then(() => res.send({ data: card }))
-      .catch(next);
+    Card.findById(cardId)
+      .populate('owner')
+      .then((card) => {
+        if (!card) {
+          throw new NotFoundError('Card not found');
+        }
+        const ownerId = card.owner.id;
+        const userId = req.user._id;
+        if (ownerId !== userId) {
+          throw new ForbiddenError('You cant delete not your card');
+        }
+        Card.findByIdAndRemove(cardId)
+          .then(() => res.send({ data: card }))
+          .catch(next);
+      });
   } catch (err) {
     next(err);
   }
@@ -48,15 +51,17 @@ const deleteCardsById = (req, res, next) => {
 const likeCard = (req, res, next) => {
   try {
     const { cardId } = req.params;
-    const card = Card.findByIdAndUpdate(
+    Card.findByIdAndUpdate(
       req.params,
       { $addToSet: { likes: cardId } },
       { new: true },
-    );
-    if (!card) {
-      throw new NotFoundError('Card not found');
-    }
-    res.send({ data: card });
+    )
+      .then((card) => {
+        if (!card) {
+          throw new NotFoundError('Card not found');
+        }
+        res.send({ data: card });
+      });
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));
@@ -69,15 +74,17 @@ const likeCard = (req, res, next) => {
 const dislikeCard = (req, res, next) => {
   try {
     const userId = req.params;
-    const card = Card.findByIdAndUpdate(
+    Card.findByIdAndUpdate(
       req.params.cardId,
       { $pull: { likes: userId } },
       { new: true },
-    );
-    if (!card) {
-      throw new NotFoundError('Card not found');
-    }
-    res.send({ data: card });
+    )
+      .then((card) => {
+        if (!card) {
+          throw new NotFoundError('Card not found');
+        }
+        res.send({ data: card });
+      });
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
       next(new ValidationError('Invalid id'));
