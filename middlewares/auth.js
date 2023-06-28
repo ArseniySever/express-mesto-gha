@@ -12,7 +12,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'secretkey', '');
+    payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
     throw new UnauthorizedError(res);
   }
