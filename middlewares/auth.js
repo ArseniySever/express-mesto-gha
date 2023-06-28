@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'secretkey', '7d');
+    payload = jwt.verify(token, 'secretkey');
   } catch (err) {
     throw new UnauthorizedError('Authorization is needed');
   }
