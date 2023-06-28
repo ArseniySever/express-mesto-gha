@@ -130,7 +130,7 @@ const login = (req, res, next) => {
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            Promise.reject(new UnauthorizedError('Incorrect data'));
+            next(new UnauthorizedError('Incorrect data'));
           } else {
             res.send({
               token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
