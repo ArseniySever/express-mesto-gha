@@ -19,7 +19,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.user._id;
 
   User.findById(id)
     .then((user) => {
@@ -77,7 +77,7 @@ const createUser = (req, res, next) => {
 
 const resumeProfile = (req, res, next) => {
   const { name, about } = req.body;
-  const { userId } = req.user;
+  const { userId } = req.user._id;
   User.findByIdAndUpdate(
     userId,
     { name, about },
@@ -98,7 +98,7 @@ const resumeProfile = (req, res, next) => {
 
 const resumeAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const { userId } = req.user;
+  const { userId } = req.user._id;
 
   User.findByIdAndUpdate(
     userId,
@@ -151,7 +151,7 @@ const login = (req, res, next) => {
 };
 
 const resumeNowProfile = (req, res, next) => {
-  const { userId } = req.user;
+  const { userId } = req.params;
   User.findById(userId)
     .then((user) => {
       if (!user) {
