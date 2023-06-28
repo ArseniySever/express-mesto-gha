@@ -19,8 +19,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { id } = req.user._id;
-
+  const { id } = req.params;
   User.findById(id)
     .then((user) => {
       if (!user) {
@@ -151,8 +150,7 @@ const login = (req, res, next) => {
 };
 
 const resumeNowProfile = (req, res, next) => {
-  const { userId } = req.user._id;
-
+  const { userId } = req.params;
   User.findById(userId)
     .then((user) => {
       if (!user) {
