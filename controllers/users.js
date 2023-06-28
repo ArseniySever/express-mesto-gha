@@ -151,7 +151,7 @@ const login = (req, res, next) => {
 };
 
 const resumeNowProfile = (req, res, next) => {
-  const { userId } = req.user._id;
+  const { userId } = req.user;
   User.findById(userId)
     .then((user) => {
       if (!user) {
