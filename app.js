@@ -43,10 +43,11 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }).unknown(true),
 }), login);
-app.use('/users', auth, userRoutes);
-app.use('/cards', auth, cardsRoutes);
+app.use(auth);
+app.use('/users', userRoutes);
+app.use('/cards', cardsRoutes);
 
-app.use('/*', auth, () => {
+app.use('/*', () => {
   throw new NotFoundError('Inncorect link');
 });
 app.use(errors());
