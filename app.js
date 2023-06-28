@@ -37,7 +37,7 @@ app.post('/signup', celebrate({
   }).unknown(true),
 }), createUser);
 
-app.post('/signin', celebrate({
+app.post('/signin', auth, celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
