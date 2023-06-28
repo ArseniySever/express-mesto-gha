@@ -5,11 +5,12 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
-const auth = require('./middlewares/auth');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
 const error = require('./middlewares/error');
+const auth = require('./middlewares/auth');
+
 const { NotFoundError } = require('./error/NotFoundError');
 const { imgConst } = require('./utils/constants');
 
