@@ -126,19 +126,18 @@ const login = (req, res, next) => {
     .then((user) => {
       if (user === null) {
         throw new UnauthorizedError('Incorrect data');
-      }
-      return bcrypt.compare(password, user.password)
+      } return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            Promise.reject(new UnauthorizedError('Incorrect data'));
-          } else {
-            res.send({
-              token: jwt.sign(
-                { _id: user._id },
-                'super-strong-secret',
-              ),
-            });
+            throw new UnauthorizedError('Неправильная почта или пароль');
           }
+          res.send({
+            token: jwt.sign(
+              { _id: user._id },
+              'super-strong-secret',
+              { expiresIn: '7d' },
+            ),
+          });
         })
         .catch((err) => {
           next(err);
