@@ -10,7 +10,7 @@ function auth(req, res, next) {
     const token = authorization.replace('Bearer ', '');
     let payload;
     try {
-      payload = jwt.verify(token, 'secretkey', '');
+      payload = jwt.verify(token, 'secretkey');
     } catch (err) {
       throw new UnauthorizedError('Для выполнения действия необходима авторизация');
     }
