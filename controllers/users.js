@@ -108,7 +108,7 @@ const resumeAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError('User not found'));
-      } res.send(user.avatar);
+      } res.send({ avatar: user.avatar });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
