@@ -12,7 +12,7 @@ const getCards = (req, res, next) => {
 
 const createCards = (req, res, next) => {
   const { name, link } = req.body;
-  const { userId } = req.user._id;
+  const { userId } = req.user;
   Card.create({ name, link, owner: userId })
     .then((card) => res
       .send({ data: card }))
@@ -50,7 +50,7 @@ const deleteCardsById = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   try {
-    const { userId } = req.user._id;
+    const { userId } = req.params;
     Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: userId } },
@@ -73,7 +73,7 @@ const likeCard = (req, res, next) => {
 
 const dislikeCard = (req, res, next) => {
   try {
-    const userId = req.user._id;
+    const userId = req.params;
     Card.findByIdAndUpdate(
       req.params.cardId,
       { $pull: { likes: userId } },
