@@ -12,8 +12,8 @@ const getCards = (req, res, next) => {
 
 const createCards = (req, res, next) => {
   const { name, link } = req.body;
-  const { userId } = req.user;
-  Card.create({ name, link, owner: userId })
+  const { _id } = req.user;
+  Card.create({ name, link, owner: _id })
     .then((card) => res
       .send({ data: card }))
     .catch((err) => {
@@ -41,7 +41,9 @@ const deleteCardsById = (req, res, next) => {
         }
         Card.findByIdAndRemove(cardId)
           .then(() => res.send({ data: card }))
-          .catch(next);
+          .catch((err) => {
+            next(err);
+          });
       });
   } catch (err) {
     next(err);
