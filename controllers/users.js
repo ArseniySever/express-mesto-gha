@@ -98,7 +98,7 @@ const resumeProfile = (req, res, next) => {
 
 const resumeAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const { _id } = req.params;
+  const { _id } = req.user;
 
   User.findByIdAndUpdate(
     _id,
