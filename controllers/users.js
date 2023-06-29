@@ -133,7 +133,10 @@ const login = (req, res, next) => {
             Promise.reject(new UnauthorizedError('Incorrect data'));
           } else {
             res.send({
-              token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
+              token: jwt.sign(
+                { _id: user._id },
+                'super-strong-secret',
+              ),
             });
           }
         })
