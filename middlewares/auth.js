@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { UnauthorizedError } = require('../error/UnauthorizedError');
 
-module.exports = (req, res, next) => {
+function auth(req, res, next) {
   try {
     const { authorization } = req.headers;
     if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -19,4 +19,6 @@ module.exports = (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
+}
+
+module.exports = { auth };

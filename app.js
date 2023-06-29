@@ -8,7 +8,7 @@ const { errors } = require('celebrate');
 
 const cardsRoutes = require('./routes/cards');
 const userRoutes = require('./routes/users');
-const auth = require('./middlewares/auth');
+const { auth } = require('./middlewares/auth');
 const error = require('./middlewares/error');
 
 const { NotFoundError } = require('./error/NotFoundError');
