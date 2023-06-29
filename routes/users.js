@@ -10,7 +10,9 @@ const {
 } = require('../controllers/users');
 const { imgConst } = require('../utils/constants');
 
-router.get('/', getUsers);
+const auth = require('../middlewares/auth');
+
+router.get('/', auth, getUsers);
 
 router.get('/:userId', celebrate({
   body: Joi.object().keys({
